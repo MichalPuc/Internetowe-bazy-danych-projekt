@@ -1,0 +1,17 @@
+<!-- templates/memberships/edit.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edycja Karnetu</title>
+</head>
+<body>
+    <h1>Edycja Karnetu</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Zapisz zmiany</button>
+    </form>
+    <br>
+    <a href="{% url 'list_memberships' %}">Powrót do listy karnetów</a>
+</body>
+</html>

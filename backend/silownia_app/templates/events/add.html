@@ -1,0 +1,18 @@
+<!-- events/add.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dodaj Wydarzenie</title>
+</head>
+<body>
+    <h1>Dodaj Wydarzenie</h1>
+    <form method="post" action="{% url 'add_event' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Dodaj Wydarzenie</button>
+    </form>
+    <nav>
+        <a href="{% url 'list_events' %}">Lista Wydarzeń</a>
+    </nav>
+</body>
+</html>

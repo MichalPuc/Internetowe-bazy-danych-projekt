@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista Klientów</title>
+</head>
+<body>
+    <h1>Lista Klientów</h1>
+    <ul>
+        {% for client in clients %}
+            <li>{{ client.login }} -
+            {% if client.is_admin %} Admin {% endif %}
+            {% if client.is_employee %} Employee {% endif %}
+            {% if client.is_trainer %} Trainer {% endif %}
+            <a href="{% url 'delete_client' client.id %}">Usuń</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_client' %}">Dodaj klienta</a>
+    <nav>
+        <a href="{% url 'index' %}">Strona Główna</a>
+    </nav>
+</body>
+</html>

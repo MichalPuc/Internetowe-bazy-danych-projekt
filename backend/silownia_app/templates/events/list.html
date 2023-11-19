@@ -1,0 +1,19 @@
+<!-- events/list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista Wydarzeń</title>
+</head>
+<body>
+    <h1>Lista Wydarzeń</h1>
+    <ul>
+        {% for event in events %}
+            <li>{{ event.get_event_type_display }} - {{ event.date }}</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'add_event' %}">Dodaj Wydarzenie</a>
+        <a href="{% url 'index' %}">Strona Główna</a>
+    </nav>
+</body>
+</html>

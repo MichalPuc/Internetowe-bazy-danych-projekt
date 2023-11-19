@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 
 class ClientManager(BaseUserManager):
@@ -60,11 +63,18 @@ class Membership(models.Model):
     expiration_date = models.DateField()
     membership_type = models.CharField(max_length=45)
 
+    def __str__(self):
+        return self.membership_type
+
 # Model wydarzenia
 class Event(models.Model):
-    event_type = models.CharField(max_length=45)
     date = models.DateTimeField()
     trainer = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
+    EVENT_TYPE_CHOICES = [
+        ('group', 'Trening grupowy'),
+        ('personal', 'Trening personalny'),
+    ]
+    event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES)
 
 # Model zapisów na wydarzenia
 class EventRegistration(models.Model):

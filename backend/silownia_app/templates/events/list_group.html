@@ -1,0 +1,22 @@
+<!-- events/list_group.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista Treningów Grupowych</title>
+</head>
+<body>
+    <h1>Lista Treningów Grupowych</h1>
+    {% for group_event in group_events %}
+        <li>{{ group_event.date }} - {{ group_event.trainer.first_name }} {{ group_event.trainer.last_name }} - Trening grupowy</li>
+        {% if user.is_authenticated %}
+            {% if not user.is_admin and not user.is_employee and not user.is_trainer %}
+                {% url 'enroll_for_group_event' group_event.id as enroll_url %}
+                <a href="{{ enroll_url }}">Zapisz się</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    <nav>
+        <a href="{% url 'index' %}">Strona Główna</a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!-- memberships/add.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dodaj Karnet</title>
+</head>
+<body>
+    <h1>Dodaj Karnet</h1>
+    <form method="post" action="{% url 'add_membership' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Dodaj Karnet</button>
+    </form>
+    <a href="{% url 'list_memberships' %}">Powrót do Listy Karnetów</a>
+    <nav>
+        <a href="{% url 'index' %}">Strona Główna</a>
+    </nav>
+</body>
+</html>

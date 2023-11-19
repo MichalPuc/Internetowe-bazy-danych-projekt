@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista Grafików Trenerów Personalnych</title>
+</head>
+<body>
+    <h1>Lista Grafików Trenerów Personalnych</h1>
+
+    <!-- Formularz do wyboru trenera -->
+    <form method="get" action="{% url 'list_personal_schedules' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Filtruj</button>
+    </form>
+
+    <ul>
+        {% for personal_event in personal_events %}
+            <li>{{ personal_event.date }} - {{ personal_event.trainer.first_name }} {{ personal_event.trainer.last_name }} - Trening personalny</li>
+        {% endfor %}
+    </ul>
+    <nav>
+        <a href="{% url 'index' %}">Strona Główna</a>
+    </nav>
+</body>
+</html>
