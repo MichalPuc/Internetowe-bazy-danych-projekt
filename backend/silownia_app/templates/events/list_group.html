@@ -1,22 +1,50 @@
 <!-- events/list_group.html -->
 {% load static %}
+{% load custom_filters %}
+
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista Treningów Grupowych</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css_files/list_group.css' %}">
 </head>
 <body>
-    <h1>Lista Treningów Grupowych</h1>
-    {% for group_event in group_events %}
-        <li>{{ group_event.date }} - {{ group_event.trainer.first_name }} {{ group_event.trainer.last_name }} - Trening grupowy</li>
-        {% if user.is_authenticated %}
-            {% if not user.is_admin and not user.is_employee and not user.is_trainer %}
-                {% url 'enroll_for_group_event' group_event.id as enroll_url %}
-                <a href="{{ enroll_url }}">Zapisz się</a>
+    <header>
+        <h1>Lista Treningów Grupowych</h1>
+    </header>
+    <main>
+        <ul>
+            {% if group_events %}
+                {% for group_event in group_events %}
+                    <li>
+                        <strong>Data:</strong> {{ group_event.date|date:"d.m.Y" }}<br>
+                        <strong>Godzina rozpoczęcia:</strong> {{ group_event.date|time:"H:i" }}<br>
+                        <strong>Czas trwania:</strong> 1 godzina<br>
+                        <strong>Trener:</strong> {{ group_event.trainer.first_name }} {{ group_event.trainer.last_name }}<br>
+                        <strong>Rodzaj treningu:</strong> Trening grupowy<br>
+
+                        {% if user.is_authenticated and not user.is_admin and not user.is_employee and not user.is_trainer %}
+                            {% with event_id=group_event.id %}
+                                {% if not user_is_registered|lookup:event_id %}
+                                    {% if group_event.get_current_registered_clients_count < group_event.max_clients %}
+                                        <p><a href="{% url 'enroll_for_group_event' event_id %}">Zapisz się</a></p>
+                                    {% else %}
+                                        <p>Maksymalna liczba uczestników osiągnięta. Nie można się zapisać.</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p>Jesteś już zapisany na te zajęcia.</p>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% else %}
+                <p>Brak dostępnych wydarzeń grupowych.</p>
             {% endif %}
-        {% endif %}
-    {% endfor %}
+        </ul>
+    </main>
     <nav>
         <a href="{% url 'index' %}">Strona Główna</a>
     </nav>

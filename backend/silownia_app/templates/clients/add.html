@@ -6,15 +6,17 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css_files/add.css' %}">
 </head>
 <body>
-    <h1>Dodaj Klienta</h1>
-    <form method="post" action="{% url 'add_client' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Dodaj</button>
-    </form>
-    <a href="{% url 'list_clients' %}">Powrót do listy klientów</a>
-    <nav>
-        <a href="{% url 'index' %}">Strona Główna</a>
-    </nav>
+    <div class="container">
+        <h1>Dodaj Klienta</h1>
+        <form method="post" action="{% url 'add_client' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Dodaj</button>
+        </form>
+        <div class="links">
+            <a href="{% url 'list_clients' %}">Powrót do listy klientów</a>
+            <a href="{% url 'index' %}">Strona Główna</a>
+        </div>
+    </div>
 </body>
 </html>

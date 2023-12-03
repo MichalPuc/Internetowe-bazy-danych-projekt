@@ -39,6 +39,10 @@ li a:hover {
     text-decoration: underline;
 }
 
+li a.blue-link {
+    color: #1a73e8
+}
+
 a {
     display: inline-block;
     margin-top: 20px;

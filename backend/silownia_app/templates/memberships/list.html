@@ -1,5 +1,5 @@
-<!-- memberships/list.html -->
 {% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,14 +8,30 @@
 </head>
 <body>
     <h1>Lista Karnetów</h1>
-    {% for client in clients %}
-        <h2>{{ client.login }}</h2>
-        <ul>
+
+    <!-- Wyszukiwarka karnetów -->
+    <form method="get" action="{% url 'list_memberships' %}">
+        <input type="text" name="search" placeholder="Wyszukaj" value="{{ request.GET.search }}">
+        <button type="submit">Szukaj</button>
+    </form>
+
+    <!-- Lista wszystkich karnetów lub wyszukanych karnetów -->
+    <ul>
+        {% for client in clients %}
             {% for membership in client.membership_set.all %}
-                <li>{{ membership }} - <a href="{% url 'delete_membership' membership.id %}">Usuń Karnet</a> - <a href="{% url 'edit_membership' membership.id %}">Edytuj Karnet</a></li>
+                {% if not request.GET.search or request.GET.search in client.login %}
+                    <li>
+                        <h2>{{ client.login }}</h2>
+                        Typ karnetu: {{ membership.get_membership_type_display }}<br>
+                        Data aktywacji: {{ membership.activation_date|date:"d.m.Y" }}<br>
+                        Data wygaśnięcia: {{ membership.expiration_date|date:"d.m.Y" }}<br>
+                        <a href="{% url 'edit_membership' membership.id %}">Edytuj Karnet</a> - <a href="{% url 'delete_membership' membership.id %}" class="red-link">Usuń Karnet</a>
+                    </li>
+                {% endif %}
             {% endfor %}
-        </ul>
-    {% endfor %}
+        {% endfor %}
+    </ul>
+
     <a href="{% url 'add_membership' %}">Dodaj Karnet</a>
     <nav>
         <a href="{% url 'index' %}">Strona Główna</a>

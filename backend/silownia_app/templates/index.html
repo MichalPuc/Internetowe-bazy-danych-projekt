@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja Strona</title>
+    <title>Siłownia</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css_files/index.css' %}">
 </head>
 <body>
@@ -16,7 +16,7 @@
         <li><a href="{% url 'user_logout' %}">Wyloguj</a></li>
         {% if user_role == 'admin' %}
             <p>Opcje dostępne dla administratora.</p>
-            <ul>
+
                 <li><a href="{% url 'list_clients' %}">Lista Klientów</a></li>
                 <li><a href="{% url 'add_client' %}">Dodaj Klienta</a></li>
                 <li><a href="{% url 'list_memberships' %}">Lista Karnetów</a></li>
@@ -25,23 +25,23 @@
                 <li><a href="{% url 'add_event' %}">Dodaj Wydarzenie</a></li>
                 <li><a href="{% url 'add_group_event' %}">Dodaj Wydarzenie Grupowe</a></li>
                 <li><a href="{% url 'user_login' %}">Login</a></li>
-            </ul>
+
         {% elif user_role == 'trainer' %}
             <p>Opcje dostępne dla trenera.</p>
-            <ul>
+
                 <li><a href="{% url 'list_events' %}">Lista Wydarzeń</a></li>
                 <li><a href="{% url 'add_event' %}">Dodaj Wydarzenie</a></li>
-            </ul>
+
         {% elif user_role == 'employee' %}
             <p>Opcje dostępne dla pracownika.</p>
-            <ul>
+
                 <li><a href="{% url 'list_clients' %}">Lista Klientów</a></li>
                 <li><a href="{% url 'add_client' %}">Dodaj Klienta</a></li>
                 <li><a href="{% url 'list_memberships' %}">Lista Karnetów</a></li>
                 <li><a href="{% url 'add_membership' %}">Dodaj Karnet</a></li>
                 <li><a href="{% url 'list_events' %}">Lista Wydarzeń</a></li>
                 <li><a href="{% url 'add_group_event' %}">Dodaj Wydarzenie Grupowe</a></li>
-            </ul>
+
         {% else %}
             <p>Opcje dostępne dla klienta.</p>
             <ul>

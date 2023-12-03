@@ -59,13 +59,22 @@ class Client(AbstractBaseUser):
 
 # Model karnetu
 class Membership(models.Model):
+    MEMBERSHIP_CHOICES = [
+        ('Normal', _('Normal')),
+        ('Premium', _('Premium')),
+    ]
+
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     activation_date = models.DateField()
     expiration_date = models.DateField()
-    membership_type = models.CharField(max_length=45)
+    membership_type = models.CharField(
+        max_length=10,
+        choices=MEMBERSHIP_CHOICES,
+        default='Normal',
+    )
 
     def __str__(self):
-        return self.membership_type
+        return f"{self.get_membership_type_display()} - {self.client.login}"
 
 # Model wydarzenia
 class Event(models.Model):
@@ -78,6 +87,9 @@ class Event(models.Model):
     event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES)
     max_clients = models.PositiveIntegerField(default=1)
     clients_list = models.ManyToManyField('Client', blank=True, related_name='client_events')
+
+    def get_current_registered_clients_count(self):
+        return self.eventregistration_set.count()
 
     
 

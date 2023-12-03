@@ -127,7 +127,9 @@ def get_group_events():
 
 def list_group_events(request):
     group_events = get_group_events()
-    return render(request, 'events/list_group.html', {'group_events': group_events})
+    user_is_registered = {event.id: request.user.eventregistration_set.filter(event=event).exists() for event in group_events}
+    print(f'{user_is_registered}')
+    return render(request, 'events/list_group.html', {'group_events': group_events, 'user_is_registered': user_is_registered})
 
 
 def list_personal_schedules(request):
@@ -188,10 +190,12 @@ def enroll_for_group_event(request, event_id):
     if EventRegistration.objects.filter(client=client, event=event).exists():
         # Tutaj możesz obsłużyć sytuację, gdy klient już jest zapisany
         # Na przykład przekierować klienta z komunikatem
+        messages.warning(request, 'Jesteś już zapisany na te zajęcia.')
         return redirect('list_group_events')
 
     # Tworzenie nowego wpisu o zapisie klienta na wydarzenie grupowe
     EventRegistration.objects.create(client=client, event=event)
 
     return redirect('list_group_events')
+
 

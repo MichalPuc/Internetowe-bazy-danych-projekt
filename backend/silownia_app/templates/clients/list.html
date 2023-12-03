@@ -7,18 +7,49 @@
 </head>
 <body>
     <h1>Lista Klientów</h1>
+
+    <!-- Wyszukiwarka użytkowników -->
+    <form method="get" action="{% url 'list_clients' %}">
+        <input type="text" name="search" placeholder="Wyszukaj" value="{{ request.GET.search }}">
+        <button type="submit">Szukaj</button>
+    </form>
+
+    <!-- Lista wszystkich klientów lub wyszukanych klientów -->
     <ul>
-        {% for client in clients %}
-            <li>{{ client.login }} -
-            {% if client.is_admin %} Admin {% endif %}
-            {% if client.is_employee %} Employee {% endif %}
-            {% if client.is_trainer %} Trainer {% endif %}
-            <a href="{% url 'delete_client' client.id %}">Usuń</a></li>
-        {% endfor %}
+        {% if request.GET.search %}
+            {% for client in clients|dictsort:'login' %}
+                {% if request.GET.search in client.login %}
+                    <li>
+                        <strong>{{ client.first_name }} {{ client.last_name }}</strong> - {{ client.login }}<br>
+                        Data urodzenia: {{ client.date_of_birth }}<br>
+                        {% if client.is_admin %} Rola: Admin {% endif %}
+                        {% if client.is_employee %} Rola: Employee {% endif %}
+                        {% if client.is_trainer %} Rola: Trainer {% endif %}
+                        <br>
+                        <a href="{% url 'list_memberships' %}?search={{ client.login }}" class="blue-link">Pokaż karnety</a>
+                        <a href="{% url 'delete_client' client.id %}">Usuń</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for client in clients|dictsort:'login' %}
+                <li>
+                    <strong>{{ client.first_name }} {{ client.last_name }}</strong> - {{ client.login }}<br>
+                    Data urodzenia: {{ client.date_of_birth }}<br>
+                    {% if client.is_admin %} Rola: Admin {% endif %}
+                    {% if client.is_employee %} Rola: Employee {% endif %}
+                    {% if client.is_trainer %} Rola: Trainer {% endif %}
+                    <br>
+                    <a href="{% url 'list_memberships' %}?search={{ client.login }}" class="blue-link">Pokaż Karnety</a>
+                    <a href="{% url 'delete_client' client.id %}">Usuń</a>
+                </li>
+            {% endfor %}
+        {% endif %}
     </ul>
+
     <a href="{% url 'add_client' %}">Dodaj klienta</a>
-    <nav>
-        <a href="{% url 'index' %}">Strona Główna</a>
-    </nav>
+
+    <a href="{% url 'index' %}">Strona Główna</a>
+
 </body>
 </html>

@@ -10,7 +10,7 @@
     <h1>Lista Wydarzeń</h1>
     <ul>
         {% for event in events %}
-            <li>{{ event.get_event_type_display }} - {{ event.date }}</li>
+            <li>{{ event.get_event_type_display }} - {{ event.date|date:"d.m.Y" }}</li>
         {% endfor %}
     </ul>
     <nav>

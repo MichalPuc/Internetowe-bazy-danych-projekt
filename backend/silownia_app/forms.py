@@ -96,20 +96,29 @@ class EventForm(forms.ModelForm):
         ('personal', 'Trening personalny'),
     ]
     event_type = forms.ChoiceField(choices=EVENT_TYPE_CHOICES, label='Typ wydarzenia')
+    max_clients = forms.IntegerField(label='Maksymalna liczba klientów', min_value=1)
 
     class Meta:
         model = Event
-        fields = ['event_type', 'date']
+        fields = ['event_type', 'date', 'max_clients']
 
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+
+        # Ustaw domyślną wartość max_clients w zależności od typu wydarzenia
+        self.fields['max_clients'].initial = 15
+
 class GroupEventForm(forms.ModelForm):
     trainer = forms.ModelChoiceField(queryset=Client.objects.filter(is_trainer=True))
+    max_clients = forms.IntegerField(label='Maksymalna liczba klientów', min_value=1)
+
     class Meta:
         model = Event
-        fields = ['date', 'trainer']
+        fields = ['date', 'trainer', 'max_clients']
 
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -120,6 +129,9 @@ class GroupEventForm(forms.ModelForm):
 
         # Ogranicz queryset do użytkowników, którzy są trenerami
         self.fields['trainer'].queryset = Client.objects.filter(is_trainer=True)
+
+        # Ustaw domyślną wartość max_clients w zależności od typu wydarzenia
+        self.fields['max_clients'].initial = 15
 
 class ClientAuthenticationForm(AuthenticationForm):
     class Meta:

@@ -42,6 +42,10 @@ li a {
     font-weight: bold;
 }
 
+li a.red-link {
+    color: red
+}
+
 li a:hover {
     text-decoration: underline;
 }
