@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render, redirect
@@ -69,12 +70,16 @@ class Membership(models.Model):
 # Model wydarzenia
 class Event(models.Model):
     date = models.DateTimeField()
-    trainer = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
+    trainer = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True, related_name='trainer_events')
     EVENT_TYPE_CHOICES = [
         ('group', 'Trening grupowy'),
         ('personal', 'Trening personalny'),
     ]
     event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES)
+    max_clients = models.PositiveIntegerField(default=1)
+    clients_list = models.ManyToManyField('Client', blank=True, related_name='client_events')
+
+    
 
 # Model zapisów na wydarzenia
 class EventRegistration(models.Model):
