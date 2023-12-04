@@ -47,3 +47,37 @@ li a {
 li a:hover {
     text-decoration: underline;
 }
+
+ul.membership-list {
+    list-style-type: none;
+    padding: 0;
+    max-width: 500px;
+    width: 100%;
+    margin: 10px auto;
+}
+
+li.membership-item {
+    background-color: white;
+    margin: 10px auto;
+    padding: 15px;
+    border: 2px solid #1a73e8;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+li.membership-item a.membership-link {
+    color: #1a73e8;
+    text-decoration: none;
+    margin: 0 5px;
+    font-weight: bold;
+}
+
+li.membership-item a.red-link.membership-link {
+    color: red;
+}
+
+li.membership-item a.membership-link:hover {
+    text-decoration: underline;
+}
+

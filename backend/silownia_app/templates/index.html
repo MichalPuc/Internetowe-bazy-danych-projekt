@@ -43,9 +43,15 @@
                 <li><a href="{% url 'add_group_event' %}">Dodaj Wydarzenie Grupowe</a></li>
 
         {% else %}
-            <p>Opcje dostępne dla klienta.</p>
-            <ul>
-
+            <h2>Twoje karnety:</h2>
+            <ul class="membership-list">
+                {% for membership in user_memberships %}
+                    <li class="membership-item">
+                        Typ karnetu: {{ membership.get_membership_type_display }}<br>
+                        Data aktywacji: {{ membership.activation_date|date:"d.m.Y" }}<br>
+                        Data wygaśnięcia: {{ membership.expiration_date|date:"d.m.Y" }}<br>
+                    </li>
+                {% endfor %}
             </ul>
         {% endif %}
     </div>

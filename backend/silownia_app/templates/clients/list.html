@@ -27,7 +27,9 @@
                         {% if client.is_trainer %} Rola: Trainer {% endif %}
                         <br>
                         <a href="{% url 'list_memberships' %}?search={{ client.login }}" class="blue-link">Pokaż karnety</a>
-                        <a href="{% url 'delete_client' client.id %}">Usuń</a>
+                        {% if user.is_admin or user.is_employee and not client.is_admin and not client.is_employee and not client.is_trainer%}
+                            <a href="{% url 'delete_client' client.id %}">Usuń</a>
+                        {% endif %}
                     </li>
                 {% endif %}
             {% endfor %}
@@ -41,7 +43,9 @@
                     {% if client.is_trainer %} Rola: Trainer {% endif %}
                     <br>
                     <a href="{% url 'list_memberships' %}?search={{ client.login }}" class="blue-link">Pokaż Karnety</a>
-                    <a href="{% url 'delete_client' client.id %}">Usuń</a>
+                    {% if user.is_admin or user.is_employee and not client.is_admin and not client.is_employee and not client.is_trainer%}
+                            <a href="{% url 'delete_client' client.id %}">Usuń</a>
+                    {% endif %}
                 </li>
             {% endfor %}
         {% endif %}

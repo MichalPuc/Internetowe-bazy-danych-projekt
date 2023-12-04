@@ -14,16 +14,8 @@ class ClientAuthBackend(ModelBackend):
         except User.DoesNotExist:
             return None
 
-        # Tutaj dodajemy logi
-        print(f'Authenticating user: {user.login}')
-        print(f'User password: {user.password}')
-        print(f'Provided login: {login}')
-        print(f'Provided password: {password}')
-        print(user.check_password(password))
-
         if user.check_password(password):
             return user
 
-        print(f'aha')
         return None
 

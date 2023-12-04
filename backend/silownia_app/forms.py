@@ -16,7 +16,21 @@ class ClientForm(forms.ModelForm):
     last_name = forms.CharField(max_length=100)
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 
-    # Dodaj 'client' jako nową opcję z domyślnym zaznaczeniem
+    # Restrict role choices based on the user creating the client
+    def __init__(self, *args, **kwargs):
+        user_role = kwargs.pop('user_role', None)
+        super(ClientForm, self).__init__(*args, **kwargs)
+
+        # If the user creating the client is an admin, allow all role choices
+        if user_role == 'admin':
+            self.fields['role'].choices = self.ROLE_CHOICES
+        # If the user creating the client is an employee, allow only 'client' role
+        elif user_role == 'employee':
+            self.fields['role'].choices = [('client', 'Client')]
+        # If user_role is not provided, default to allowing all role choices
+        else:
+            self.fields['role'].choices = self.ROLE_CHOICES
+
     ROLE_CHOICES = [
         ('client', 'Client'),
         ('employee', 'Employee'),
@@ -139,4 +153,6 @@ class ClientAuthenticationForm(AuthenticationForm):
         fields = ['login', 'password']
 
 class TrainerSelectForm(forms.Form):
-    trainer = forms.ModelChoiceField(queryset=Client.objects.filter(is_trainer=True))
+    trainer = forms.ModelChoiceField(queryset=Client.objects.filter(is_trainer=True), required=False)
+
+

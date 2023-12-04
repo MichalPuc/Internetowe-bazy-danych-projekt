@@ -1,7 +1,9 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista Grafików Trenerów Personalnych</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css_files/list_personal_schedules.css' %}">
 </head>
@@ -15,11 +17,24 @@
         <button type="submit">Filtruj</button>
     </form>
 
-    <ul>
-        {% for personal_event in personal_events %}
-            <li>{{ personal_event.date }} - {{ personal_event.trainer.first_name }} {{ personal_event.trainer.last_name }} - Trening personalny</li>
-        {% endfor %}
-    </ul>
+    <main>
+        <ul>
+            {% for personal_event in personal_events %}
+                <li>
+                    <strong>Data:</strong> {{ personal_event.date|date:"d.m.Y" }}<br>
+                    <strong>Godzina rozpoczęcia:</strong> {{ personal_event.date|time:"H:i" }}<br>
+                    <strong>Czas trwania:</strong> 1 godzina<br>
+                    <strong>Trener:</strong> {{ personal_event.trainer.first_name }} {{ personal_event.trainer.last_name }}<br>
+                    <strong>Rodzaj treningu:</strong> Trening personalny<br>
+                    <!-- Dodaj dowolne dodatkowe informacje o treningu personalnym -->
+
+                    {% if user.is_authenticated and not user.is_admin and not user.is_employee and not user.is_trainer %}
+                        <!-- Dodaj obsługę zapisów na trening personalny, jeśli potrzebujesz -->
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
     <nav>
         <a href="{% url 'index' %}">Strona Główna</a>
     </nav>

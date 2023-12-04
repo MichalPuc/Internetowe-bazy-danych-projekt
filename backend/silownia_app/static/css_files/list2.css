@@ -30,6 +30,36 @@ li {
     text-align: center;
 }
 
+li a {
+    color: red;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+li a:hover {
+    text-decoration: underline;
+}
+
+li a.blue-link {
+    color: #1a73e8
+}
+
+a {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #333;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.past-event {
+    opacity: 0.6; /* Adjust the opacity to your preference for past events */
+    color: red;
+}
+
 nav {
     margin-top: 20px;
     text-align: center;

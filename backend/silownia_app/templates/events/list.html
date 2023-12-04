@@ -1,5 +1,6 @@
 <!-- events/list.html -->
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,11 +9,41 @@
 </head>
 <body>
     <h1>Lista Wydarzeń</h1>
-    <ul>
-        {% for event in events %}
-            <li>{{ event.get_event_type_display }} - {{ event.date|date:"d.m.Y" }}</li>
-        {% endfor %}
-    </ul>
+    <main>
+        <ul>
+            {% for event in events %}
+                <li>
+                    <strong>Data:</strong> {{ event.date|date:"d.m.Y" }}<br>
+                    <strong>Godzina rozpoczęcia:</strong> {{ event.date|time:"H:i" }}<br>
+                    <strong>Czas trwania:</strong> 1 godzina<br>
+                    <strong>Trener:</strong> {{ event.trainer.first_name }} {{ event.trainer.last_name }}<br>
+                    {% if event.event_type == 'group' %}
+                        <strong>Rodzaj treningu:</strong> Trening grupowy<br>
+
+                        {% if user.is_authenticated and not user.is_admin and not user.is_employee and not user.is_trainer %}
+                            {% with event_id=event.id %}
+                                {% if not user_is_registered|lookup:event_id %}
+                                    {% if event.get_current_registered_clients_count < event.max_clients %}
+                                        <p><a href="{% url 'enroll_for_group_event' event_id %}">Zapisz się</a></p>
+                                    {% else %}
+                                        <p>Maksymalna liczba uczestników osiągnięta. Nie można się zapisać.</p>
+                                    {% endif %}
+                                {% else %}
+                                    <p>Jesteś już zapisany na te zajęcia.</p>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    {% else %}
+                        <!-- Additional details for non-group events if needed -->
+                        <strong>Rodzaj wydarzenia:</strong> {{ event.get_event_type_display }}<br>
+                    {% endif %}
+                    {% if user.is_admin or user.is_employee or user == event.trainer %}
+                        <a href="{% url 'delete_event' event.id %}">Usuń</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
     <nav>
         <a href="{% url 'add_event' %}">Dodaj Wydarzenie</a>
         <a href="{% url 'index' %}">Strona Główna</a>

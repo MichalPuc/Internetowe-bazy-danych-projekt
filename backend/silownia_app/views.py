@@ -20,36 +20,43 @@ def index(request):
         elif request.user.is_admin:
             user_role = 'admin'
 
-    print(f'User: {request.user}, Role: {user_role}')
+        # Dodaj poniższy kod, aby uzyskać karnety użytkownika
+        user_memberships = Membership.objects.filter(client=request.user)
+        context = {'user_role': user_role, 'user_memberships': user_memberships}
+    else:
+        context = {'user_role': user_role}
 
-    context = {'user_role': user_role}
     return render(request, 'index.html', context)
 
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def list_clients(request):
     clients = Client.objects.all()
     return render(request, 'clients/list.html', {'clients': clients, 'home_url': 'home'})
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def add_client(request):
     if request.method == 'POST':
-        form = ClientForm(request.POST)
+        # Pass the user's role to the form
+        form = ClientForm(request.POST, user_role='admin' if request.user.is_admin else 'employee')
+
         if form.is_valid():
             form.save()
             return redirect('list_clients')
     else:
-        form = ClientForm()
+        # Pass the user's role to the form
+        form = ClientForm(user_role='admin' if request.user.is_admin else 'employee')
 
     return render(request, 'clients/add.html', {'form': form, 'home_url': 'home'})
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='login')
 def delete_client(request, client_id):
     client = Client.objects.get(id=client_id)
     client.delete()
     return redirect('list_clients')
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def add_membership(request):
     if request.method == 'POST':
         form = MembershipForm(request.POST)
@@ -61,18 +68,18 @@ def add_membership(request):
 
     return render(request, 'memberships/add.html', {'form': form, 'home_url': 'home'})
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def delete_membership(request, membership_id):
     membership = Membership.objects.get(id=membership_id)
     membership.delete()
     return redirect('list_memberships')
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def list_memberships(request):
     clients_with_memberships = Client.objects.prefetch_related('membership_set').all()
     return render(request, 'memberships/list.html', {'clients': clients_with_memberships})
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def edit_membership(request, membership_id):
     membership = get_object_or_404(Membership, id=membership_id)
 
@@ -86,7 +93,7 @@ def edit_membership(request, membership_id):
 
     return render(request, 'memberships/edit.html', {'form': form, 'membership': membership})
 
-@user_passes_test(lambda user: user.is_active and user.is_trainer, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_trainer or user.is_admin), login_url='user_login')
 def add_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
@@ -100,7 +107,7 @@ def add_event(request):
 
     return render(request, 'events/add.html', {'form': form})
 
-@user_passes_test(lambda user: user.is_active and user.is_employee, login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin), login_url='user_login')
 def add_group_event(request):
     if request.method == 'POST':
         form = GroupEventForm(request.POST)
@@ -117,12 +124,12 @@ def add_group_event(request):
 
 
 def list_events(request):
-    events = Event.objects.all()  # Retrieve all events from the database
+    events = Event.objects.all().order_by('date')  # Sort events by date
     context = {'events': events}
     return render(request, 'events/list.html', context)
 
 def get_group_events():
-    group_events = Event.objects.filter(event_type='group')
+    group_events = Event.objects.filter(event_type='group').order_by('date')  # Sort group events by date
     return group_events
 
 def list_group_events(request):
@@ -146,6 +153,18 @@ def list_personal_schedules(request):
 
     return render(request, 'events/list_personal_schedules.html',
                   {'form': form, 'trainers': trainers, 'personal_events': personal_events})
+
+
+@user_passes_test(lambda user: user.is_active and (user.is_employee or user.is_admin or user.is_trainer), login_url='user_login')
+def delete_event(request, event_id):
+    event = Event.objects.get(id=event_id)
+
+    # Check if the user has permission to delete the event
+    if not (request.user.is_admin or request.user == event.trainer):
+        return redirect('list_events')
+
+    event.delete()
+    return redirect('list_events')
 
 def show_user_credentials(request):
     users = Client.objects.all()

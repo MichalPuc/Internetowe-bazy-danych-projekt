@@ -13,10 +13,8 @@
             {{ form.as_p }}
             <button type="submit">Dodaj</button>
         </form>
-        <div class="links">
-            <a href="{% url 'list_clients' %}">Powrót do listy klientów</a>
-            <a href="{% url 'index' %}">Strona Główna</a>
-        </div>
+        <a href="{% url 'list_clients' %}">Powrót do listy klientów</a>
+        <a href="{% url 'index' %}">Strona Główna</a>
     </div>
 </body>
 </html>
