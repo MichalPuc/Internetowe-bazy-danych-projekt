@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista klientów zapisanych na to wydarzenie</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css_files/list2.css' %}">
+</head>
+<body>
+  <h2>Lista klientów zapisanych na trening</h2>
+  <p><strong>Data:</strong> {{ event.date|date:"d.m.Y" }}</p>
+  <p><strong>Trener:</strong> {{ event.trainer.first_name }} {{ event.trainer.last_name }}</p>
+
+  <ul>
+    {% for registration in registered_clients %}
+      <li>
+        {{ registration.client.first_name }} {{ registration.client.last_name }}
+        <a href="{% url 'remove_client_from_event' event.id registration.client.id %}">Usuń</a>
+      </li>
+    {% endfor %}
+  </ul>
+<a href="{% url 'list_events' %}">Powrót do Listy Wydarzeń</a>
+    <nav>
+        <a href="{% url 'index' %}">Strona Główna</a>
+    </nav>
+</body>
+</html>

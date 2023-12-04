@@ -2,7 +2,8 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Client, Membership, Event, EventRegistration
-from .forms import ClientForm, Membership, MembershipForm, MembershipEditForm, EventForm, GroupEventForm, TrainerSelectForm
+from .forms import ClientForm, Membership, MembershipForm, MembershipEditForm, EventForm, GroupEventForm, \
+    TrainerSelectForm, ClientSelectForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 import logging
@@ -216,5 +217,72 @@ def enroll_for_group_event(request, event_id):
     EventRegistration.objects.create(client=client, event=event)
 
     return redirect('list_group_events')
+
+
+@login_required(login_url='user_login')
+def select_client_for_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id, event_type='personal', trainer=request.user)
+
+    if request.method == 'POST':
+        form = ClientSelectForm(request.POST)
+        if form.is_valid():
+            selected_client_id = form.cleaned_data['selected_client']
+            selected_client = get_object_or_404(Client, id=selected_client_id)
+            event.clients.add(selected_client.id)  # Dodaj identyfikator klienta
+            return redirect('list_events')
+    else:
+        form = ClientSelectForm()
+
+    return render(request, 'events/select_client.html', {'form': form, 'event': event})
+
+
+@login_required(login_url='user_login')
+@user_passes_test(lambda user: user.is_active and (user.is_admin or user.is_trainer), login_url='user_login')
+def add_client_to_personal_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id, event_type='personal', trainer=request.user)
+
+    if request.method == 'POST':
+        form = ClientSelectForm(request.POST)
+        if form.is_valid():
+            selected_client_id = form.cleaned_data['selected_client'].id
+            selected_client = get_object_or_404(Client, id=selected_client_id)
+
+            # Sprawdź, czy liczba zapisanych klientów nie przekracza max_clients
+            if event.get_current_registered_clients_count() < event.max_clients:
+                registration, created = EventRegistration.objects.get_or_create(client=selected_client, event=event)
+
+                if created:
+                    messages.success(request, 'Dodano klienta do wydarzenia personalnego.')
+                else:
+                    messages.warning(request, 'Klient jest już zapisany na to wydarzenie.')
+            else:
+                messages.warning(request, 'Maksymalna liczba uczestników osiągnięta. Nie można dodać więcej klientów.')
+
+            return redirect('list_clients_for_event', event_id)
+    else:
+        form = ClientSelectForm()
+
+    return render(request, 'events/add_client_to_personal_event.html', {'event': event, 'form': form})
+
+def list_clients_for_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    registered_clients = EventRegistration.objects.filter(event=event).select_related('client')
+
+    return render(request, 'events/list_clients_for_event.html', {'event': event, 'registered_clients': registered_clients})
+
+def remove_client_from_event(request, event_id, client_id):
+    event = get_object_or_404(Event, id=event_id)
+    client = get_object_or_404(Client, id=client_id)
+
+    # Sprawdź, czy klient jest zapisany na dane wydarzenie
+    registration = EventRegistration.objects.filter(event=event, client=client).first()
+
+    if registration:
+        registration.delete()
+        messages.success(request, 'Klient został usunięty z wydarzenia.')
+    else:
+        messages.warning(request, 'Klient nie był zapisany na to wydarzenie.')
+
+    return redirect('list_clients_for_event', event_id=event.id)
 
 

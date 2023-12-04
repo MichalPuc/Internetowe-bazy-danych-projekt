@@ -37,6 +37,10 @@
                         <!-- Additional details for non-group events if needed -->
                         <strong>Rodzaj wydarzenia:</strong> {{ event.get_event_type_display }}<br>
                     {% endif %}
+                    {% if event.event_type == 'personal' and user == event.trainer %}
+                        <a href="{% url 'select_client_for_event' event.id %}" class="blue-link">Zapisz klienta</a>
+                        <a href="{% url 'list_clients_for_event' event.id %}" class="blue-link">Lista Klientów</a>
+                    {% endif %}
                     {% if user.is_admin or user.is_employee or user == event.trainer %}
                         <a href="{% url 'delete_event' event.id %}">Usuń</a>
                     {% endif %}

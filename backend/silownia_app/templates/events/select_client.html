@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wybierz klienta</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css_files/add2.css' %}">
+</head>
+<body>
+  <h1>Wybierz klienta</h1>
+  <form method="post" action="{% url 'add_client_to_personal_event' event.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Dodaj klienta</button>
+  </form>
+</body>
+</html>

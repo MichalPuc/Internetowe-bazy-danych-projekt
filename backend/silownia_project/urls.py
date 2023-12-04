@@ -18,7 +18,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include, re_path
 from django.contrib import admin
 from silownia_app import views
-from silownia_app.views import edit_membership, add_event, list_events, user_login, delete_event
+from silownia_app.views import edit_membership, add_event, list_events, user_login, delete_event, select_client_for_event, add_client_to_personal_event, list_clients_for_event, remove_client_from_event
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -37,8 +37,12 @@ urlpatterns = [
     path('events/add_group/', views.add_group_event, name='add_group_event'),
     path('events/list_group/', views.list_group_events, name='list_group_events'),
     path('events/list_personal_schedules/', views.list_personal_schedules, name='list_personal_schedules'),
+    path('select_client/<int:event_id>/', select_client_for_event, name='select_client_for_event'),
+    path('add_client_to_personal_event/<int:event_id>/', add_client_to_personal_event, name='add_client_to_personal_event'),
     path('enroll_group_event/<int:event_id>/', views.enroll_for_group_event, name='enroll_for_group_event'),
     path('events/delete/<int:event_id>/', delete_event, name='delete_event'),
     path('logout/', views.user_logout, name='user_logout'),
+    path('list_clients_for_event/<int:event_id>/', list_clients_for_event, name='list_clients_for_event'),
+    path('remove_client_from_event/<int:event_id>/<int:client_id>/', remove_client_from_event, name='remove_client_from_event'),
 ]
 

@@ -155,4 +155,7 @@ class ClientAuthenticationForm(AuthenticationForm):
 class TrainerSelectForm(forms.Form):
     trainer = forms.ModelChoiceField(queryset=Client.objects.filter(is_trainer=True), required=False)
 
+class ClientSelectForm(forms.Form):
+    selected_client = forms.ModelChoiceField(queryset=Client.objects.all(), label='Wybierz klienta')
+
 
